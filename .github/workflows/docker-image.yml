@@ -1,0 +1,43 @@
+name: docker
+
+env:
+  IMAGE_GROUP: ${{ vars.IMAGE_GROUP }}
+  IMAGE_REGION: ${{ vars.IMAGE_REGION }}
+  ACCESS_KEY: ${{ secrets.ACCESSKEY }}
+  SECRET_ACCESS_KEY: ${{ secrets.SECRETACCESSKEY }}
+
+
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Huawei Cloud SWR
+        uses: huaweicloud/swr-login@v2.1.0
+        with:
+          region: ${{ env.IMAGE_REGION }}
+          access-key-id: ${{ env.ACCESS_KEY }}
+          access-key-secret: ${{ env.SECRET_ACCESS_KEY }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.4.0
+      - name: Use Skopeo Tools Sync Image to swr
+        run: |
+          #!/usr/bin/env bash
+          skopeo --version
+          while IFS= read -r line || [ -n "$line" ]; do
+            # 忽略空行与注释
+            if [[ -z "$line" || "$line" =~ ^# ]]; then
+              continue
+            fi
+            image=$(echo $line)
+            image_name=$(echo "$image" | rev | cut -d':' -f2- | rev | awk -F'/' '{print $NF}')
+            image_tag=${image#*:}
+            origin=$image
+            destination=swr.${{ env.IMAGE_REGION }}.myhuaweicloud.com/${{ env.IMAGE_GROUP }}/$image_name:$image_tag
+            echo "origin: $origin ==> destination: $destination"
+            skopeo copy --all docker://$origin docker://$destination 
+          done < images.txt
