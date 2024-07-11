@@ -1,10 +1,11 @@
-name: docker
+name: sync-images
 
 env:
   IMAGE_GROUP: ${{ vars.IMAGE_GROUP }}
   IMAGE_REGION: ${{ vars.IMAGE_REGION }}
   ACCESS_KEY: ${{ secrets.ACCESSKEY }}
   SECRET_ACCESS_KEY: ${{ secrets.SECRETACCESSKEY }}
+  IMAGES: ${{ github.event.inputs.images }}
 
 
 on:
@@ -12,12 +13,25 @@ on:
     branches: [ main ]
     paths:
       - 'images.txt'
+  workflow_dispatch:
+    inputs:
+      images:
+        description: 'images name'
+        required: true
+        default: ''
+
 jobs:
-  build:
+  sync-images:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: write images.txt
+        run: |
+          if [ -n "${{ env.IMAGES }}" ]; then
+            echo "images info is not empty"
+            echo  ${{ env.IMAGES }} > images.txt
+          fi
       - name: Login to Huawei Cloud SWR
         uses: huaweicloud/swr-login@v2.1.0
         with:
