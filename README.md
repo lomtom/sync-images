@@ -71,6 +71,14 @@ lomtom		*************					*****************
 ![image-20240709151150625](./docs/img/readme/image-20240709151150625.png)
 
 ### Step5：同步镜像
+
+有两种方式来同步镜像：
+
+- 第一种：将 修改后的 images.txt 文件提交到仓库的main分支上
+- 第二种：手动触发 GitHub Actions。
+
+#### 方法一 
+
 1. 配置完成后，同步镜像变得非常简单。只需修改仓库中的 images.txt 文件，例如需要同步 bash 的 5 和 5.2 两个版本，在 images.txt 中写入：
 
 ```
@@ -81,6 +89,14 @@ bash:5.2
 2. 将修改提交到 main 分支，等待 GitHub Actions 执行完毕。
 
 ![image-20240709151540039](./docs/img/readme/image-20240709151540039.png)
+
+#### 方法二
+
+1. 点击仓库右上角的“Actions”按钮，进入 Actions 页面。
+
+2. 在 Actions 页面中，选择“Sync Images”工作流，点击“Run workflow”按钮，填写镜像名称和版本，例如：bash :5.1，然后点击“Run workflow”按钮。
+
+![img.png](docs/img/readme/image-20240711.png)
 
 最终，您可以在 SWR 上查看到同步的所有镜像，包括镜像的所有架构。
 
