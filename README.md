@@ -1,6 +1,6 @@
 
 
-<h1 align=center>🔬镜像同步swr</h1>
+<h1 align=center>🔬无服务器同步dockerhub镜像到swr</h1>
 
 <p align=center>在工作或学习中，有时需要将 DockerHub 上的镜像同步到个人仓库。本文将详细介绍如何将 DockerHub 镜像同步至华为云的 SWR（SoftWare Repository for Container），此方法简单易用，支持多架构。
 </p>
