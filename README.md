@@ -39,7 +39,7 @@ lomtom		*************					*****************
 
 ### Step2：创建swr组织
 
-1. 进入[swr组织页面](https://console.huaweicloud.com/swr/?region=cn-east-3#/swr/organization)，点击“创建组11织”按钮。
+1. 进入[swr组织页面](https://console.huaweicloud.com/swr/?region=cn-east-3#/swr/organization)，点击“创建组织”按钮。
 2. 例如，在“上海一”区域创建一个名为 lomtom-common 的组织。
 
 后续操作将使用以下参数：
