@@ -49,10 +49,19 @@ jobs:
             if [[ -z "$line" || "$line" =~ ^# ]]; then
               continue
             fi
-            image=$(echo $line)
-            image_name=$(echo "$image" | rev | cut -d':' -f2- | rev | awk -F'/' '{print $NF}')
-            image_tag=${image#*:}
-            origin=$image
+            # 处理新格式和旧格式
+            if [[ "$line" =~ \  ]]; then
+              # 新格式: bash:latest bash:5
+              origin=$(echo "$line" | awk '{print $1}')
+              new_image=$(echo "$line" | awk '{print $2}')
+              image_name=$(echo "$new_image" | cut -d':' -f1)
+              image_tag=$(echo "$new_image" | cut -d':' -f2)
+            else
+              # 旧格式: bash:5
+              origin=$(echo "$line")
+              image_name=$(echo "$origin" | rev | cut -d':' -f2- | rev | awk -F'/' '{print $NF}')
+              image_tag=${origin#*:}
+            fi
             destination=swr.${{ env.IMAGE_REGION }}.myhuaweicloud.com/${{ env.IMAGE_GROUP }}/$image_name:$image_tag
             echo "origin: $origin ==> destination: $destination"
             skopeo copy --all docker://$origin docker://$destination 

@@ -1,2 +1,2 @@
-bash:5
+bash:latest bash:5
 bash:5.2
