@@ -79,10 +79,12 @@ lomtom		*************					*****************
 
 #### 方法一 
 
-1. 配置完成后，同步镜像变得非常简单。只需修改仓库中的 images.txt 文件，例如需要同步 bash 的 5 和 5.2 两个版本，在 images.txt 中写入：
+1. 配置完成后，同步镜像变得非常简单。只需修改仓库中的 images.txt 文件，例如需要同步 bash 的 latest 和 5.2 两个版本，在 images.txt 中写入：
 
 ```
-bash:5
+# 会将 bash:latest 镜像同步到 swr 镜像名和标签修改为 bash:5
+bash:latest bash:5
+# 会将 bash:5.2 镜像同步到 swr 镜像名和标签仍然为 bash:5.2
 bash:5.2
 ```
 
