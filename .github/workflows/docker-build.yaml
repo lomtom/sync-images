@@ -1,0 +1,46 @@
+name: build-image
+
+env:
+  IMAGE_GROUP: ${{ vars.IMAGE_GROUP }}
+  IMAGE_REGION: ${{ vars.IMAGE_REGION }}
+  ACCESS_KEY: ${{ secrets.ACCESSKEY }}
+  SECRET_ACCESS_KEY: ${{ secrets.SECRETACCESSKEY }}
+  IMAGES: "demo:latest"
+
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+
+jobs:
+  build-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Huawei Cloud SWR
+        uses: huaweicloud/swr-login@v2.1.0
+        with:
+          region: ${{ env.IMAGE_REGION }}
+          access-key-id: ${{ env.ACCESS_KEY }}
+          access-key-secret: ${{ env.SECRET_ACCESS_KEY }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Set image
+        run: |
+          # 读取Dockerfile第一行注释的值
+          image_name=$(sed -n '1p' Dockerfile | awk '{print $2}')
+          echo "IMAGES=${image_name}" >> $GITHUB_ENV
+          echo "${image_name}"
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: .
+          push: true
+          provenance: false
+          tags: swr.${{ env.IMAGE_REGION }}.myhuaweicloud.com/${{ vars.IMAGE_GROUP }}/${{ env.IMAGES }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
